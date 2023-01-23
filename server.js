@@ -23,16 +23,22 @@ app.use(express.json());
 //2nd argument is a callback fucntion
 app.post('/dream', async (req,res)=>{
 
-    const prompt = req.body.prompt;
-    //n is the number of images we want in response
-    const aiResponse = await openai.createImage({
-        prompt,
-        n:1,
-        size: '1024x1024'
-    });
-
-    const image = aiResponse.data.data[0].url;
-    res.send({image});
+try {
+	    const prompt = req.body.prompt;
+	    //n is the number of images we want in response
+	    const aiResponse = await openai.createImage({
+	        prompt,
+	        n:1,
+	        size: '1024x1024'
+	    });
+	
+	    const image = aiResponse.data.data[0].url;
+	    //console.log('Image response in server', image);
+	    res.send({image});
+} catch (error) {
+	console.error(error);
+    res.status(500).send(error?.response.data.error.message || 'Something went wrong!');
+}
 });
 
 app.listen(8080,()=> console.log('make art on http://localhost:8080/dream'));
